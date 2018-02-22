@@ -42,11 +42,15 @@ export type PromptStyle = $Enum<{
 }>;
 
 type Options = {
+    disableFullscreenUI?: ?boolean;
     cancelable?: ?boolean;
     type?: ?PromptType;
     defaultValue?: ?String;
-    placeholder?: ?String;
     style?: ?PromptStyle;
+    placeholder?: ?String;
+    placeholderColor?: ?String;
+    highlightColor?: ?String;
+    color?: ?String;
 };
 
 /**
@@ -85,7 +89,7 @@ export default function prompt(
     let buttons = typeof callbackOrButtons === 'function'
       ? defaultButtons
       : callbackOrButtons;
-      
+
     let config = {
         title: title || '',
         message: message || '',
@@ -94,11 +98,15 @@ export default function prompt(
     if (options) {
         config = {
             ...config,
+            highlightColor: options.highlightColor || null,
+            placeholderColor: options.placeholderColor || null,
+            color: options.color || null,
+            disableFullscreenUI: options.disableFullscreenUI === true,
             cancelable: options.cancelable !== false,
             type: options.type || 'default',
             style: options.style || 'default',
             defaultValue: options.defaultValue || '',
-            placeholder: options.placeholder || ''
+            placeholder: options.placeholder || null
         };
     }
     // At most three buttons (neutral, negative, positive). Ignore rest.
@@ -121,7 +129,7 @@ export default function prompt(
         };
     }
 
-
+    console.log('config:', config);
     PromptAndroid.promptWithArgs(
         config,
         (action, buttonKey, input) => {
