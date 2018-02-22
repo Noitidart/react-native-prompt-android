@@ -10,6 +10,8 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.view.inputmethod.EditorInfo;
+import android.graphics.Color;
 
 import javax.annotation.Nullable;
 
@@ -25,6 +27,10 @@ public class RNPromptFragment extends DialogFragment implements DialogInterface.
     /* package */ static final String ARG_STYLE = "style";
     /* package */ static final String ARG_DEFAULT_VALUE = "defaultValue";
     /* package */ static final String ARG_PLACEHOLDER = "placeholder";
+    /* package */ static final String ARG_PLACEHOLDER_COLOR = "placeholderColor";
+    /* package */ static final String ARG_DISABLE_FULL_SCREEN_UI = "disableFullscreenUI";
+    /* package */ static final String ARG_HIGHLIGHT_COLOR = "highlightColor";
+    /* package */ static final String ARG_COLOR = "color";
 
     private EditText mInputText;
 
@@ -108,6 +114,8 @@ public class RNPromptFragment extends DialogFragment implements DialogInterface.
                 input = new EditText(activityContext);
         }
 
+
+
         // input type
         int type = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
         if (arguments.containsKey(ARG_TYPE)) {
@@ -134,6 +142,21 @@ public class RNPromptFragment extends DialogFragment implements DialogInterface.
         }
         input.setInputType(type);
 
+        if (arguments.containsKey(ARG_HIGHLIGHT_COLOR)) {
+            String highlightColor = arguments.getString(ARG_HIGHLIGHT_COLOR);
+            if (highlightColor != null) {
+                input.setHighlightColor(Color.parseColor(highlightColor));
+            }
+        }
+
+        if (arguments.containsKey(ARG_DISABLE_FULL_SCREEN_UI)) {
+            boolean disableFullscreenUI = arguments.getBoolean(ARG_DISABLE_FULL_SCREEN_UI);
+            if (disableFullscreenUI) {
+                int imeOptions = input.getImeOptions();
+                input.setImeOptions(imeOptions | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+            }
+        }
+
         if (arguments.containsKey(ARG_DEFAULT_VALUE)) {
             String defaultValue = arguments.getString(ARG_DEFAULT_VALUE);
             if (defaultValue != null) {
@@ -143,10 +166,26 @@ public class RNPromptFragment extends DialogFragment implements DialogInterface.
             }
         }
 
+
+        if (arguments.containsKey(ARG_COLOR)) {
+            String color = arguments.getString(ARG_COLOR);
+            if (color != null) {
+                input.setTextColor(Color.parseColor(color));
+            }
+        }
+
         if (arguments.containsKey(ARG_PLACEHOLDER)) {
             input.setHint(arguments.getString(ARG_PLACEHOLDER));
+            if (arguments.containsKey(ARG_PLACEHOLDER_COLOR)) {
+                String placeholderColor = arguments.getString(ARG_PLACEHOLDER_COLOR);
+                if (placeholderColor != null) {
+                    input.setHintTextColor(Color.parseColor(arguments.getString(ARG_PLACEHOLDER_COLOR)));
+                }
+            }
         }
         alertDialog.setView(input, 50, 15, 50, 0);
+
+        // input.setLinkTextColor(Color.parseColor("green"));
 
         mInputText = input;
         return alertDialog;
